@@ -34,7 +34,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test\Test.vcxproj",
 		{4B6544F4-2FDB-40B7-9BF0-7CD6ECE063A0} = {4B6544F4-2FDB-40B7-9BF0-7CD6ECE063A0}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Videogamex", "VideogameTest\Videogamex.vcxproj", "{2C5C0813-0DCD-48D9-8F54-704825FB0C07}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VideogameTest", "VideogameTest\Videogamex.vcxproj", "{2C5C0813-0DCD-48D9-8F54-704825FB0C07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

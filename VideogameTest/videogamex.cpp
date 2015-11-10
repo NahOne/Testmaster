@@ -1,6 +1,6 @@
 #include <Windows.h>
 #include <d3d11.h>
-
+#include "ContextManager.h"
 
 #pragma comment(lib,"d3d11.lib")
 
@@ -8,7 +8,7 @@
 #define WIDTH_APPLICATION 800
 #define HEIGHT_APPLICATION 600
 
-
+/*
 int CreateContext(HWND hWnd, UINT width_application, UINT height_application){
 	// Tendremos que crear y rellenar una estructura de este tipo
 	DXGI_SWAP_CHAIN_DESC desc;
@@ -65,13 +65,13 @@ D3D_FEATURE_LEVEL  FeatureLevelsSupported;
 	{
     return hr;
 }*/
-
+/*
 	HRESULT hr;
 	if (FAILED(hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, featureLevels, numFeatureLevels, D3D11_SDK_VERSION, &desc, &l_SwapChain, &l_D3DDevice, NULL, &l_DeviceContext)))
 	{
 		return S_FALSE;
 	}
-}
+}*/
 
 //-----------------------------------------------------------------------------
 // Name: MsgProc()
@@ -123,19 +123,26 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 
 
   // Create the application's window
-	 HWND hWnd = CreateWindow( APPLICATION_NAME, APPLICATION_NAME, WS_OVERLAPPEDWINDOW, 100, 100, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, wc.hInstance, NULL);
+  HWND hWnd = CreateWindow( APPLICATION_NAME, APPLICATION_NAME, WS_OVERLAPPEDWINDOW, 100, 100, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, wc.hInstance, NULL);
 
 
   // TODO Crear el contexto DIRECTX
-  CreateContext( hWnd, WIDTH_APPLICATION, HEIGHT_APPLICATION);
-	
+  //CreateContext( hWnd, WIDTH_APPLICATION, HEIGHT_APPLICATION);
+  CContextManager* context = new CContextManager();
+  context->Init(hWnd, WIDTH_APPLICATION, HEIGHT_APPLICATION);
+  context->TakeRenderTarget();
+
 
   // Añadir aquí el Init de la applicacioón
-
   ShowWindow( hWnd, SW_SHOWDEFAULT );
+
+
 
   // TODO Crear el back buffer
   //CreateBackBuffer( hWnd, rc.right - rc.left, rc.bottom - rc.top );
+  context->CreateBackBuffer(hWnd, rc.right - rc.left, rc.bottom - rc.top );
+
+
 
   UpdateWindow( hWnd );
   MSG msg;
@@ -153,11 +160,13 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
     else
     {
        // Main loop: Añadir aquí el Update y Render de la aplicación principal
+	   context->Render();
     }
   }
   UnregisterClass( APPLICATION_NAME, wc.hInstance );
 
   // Añadir una llamada a la alicación para finalizar/liberar memoria de todos sus datos
+  delete context;
 
   return 0;
 }

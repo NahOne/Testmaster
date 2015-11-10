@@ -202,6 +202,29 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 /***************************************************************************************
+**					A partir de aquí ya podemos renderizar                            **
+***************************************************************************************/
+
+
+// Limpiar el framebuffer:
+// float color[4] = {1,0,1,1}
+// ID3D11DeviceContext::ClearRenderTargetView(l_RenderTargetView, color)
+// ID3D11DeviceContext::ClearDepthStencilView
+
+// definir a que target vamos a pintar:
+// ID3D11DeviceContext::OMSetRenderTargets(1, &l_RenderTargetView, nullptr)
+
+// definir el viewport:
+// D3D11_VIEWPORT viewport(0,0,800,600,0,1}
+// ID3D11DeviceContext::RSSetViewports
+
+// TODO renderizar aqui
+
+// presentar lo pintado:
+// IDXGISwapChain::Present(0,0)
+
+
+/***************************************************************************************
 **                  	Luego vamos a añadir un buffer de profundidad.                **
 ***************************************************************************************/
 
@@ -217,8 +240,8 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		// TODO:
 		//desc.Width;
 		//desc.Height;
-		//desc.MipLevels;
-		//desc.ArraySize;
+		//desc.MipLevels;   <- 1
+		//desc.ArraySize;   <- 1
 		//desc.SampleDesc.Count;
 		//desc.SampleDesc.Quality;
 		hr = l_D3DDevice->CreateTexture2D(&desc, NULL, &l_DepthStencil);
@@ -237,27 +260,6 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			return hr;
 	}
 }
-
-/***************************************************************************************
-**					A partir de aquí ya podemos renderizar                            **
-***************************************************************************************/
-
-
-// Limpiar el framebuffer:
-// ID3D11DeviceContext::ClearRenderTargetView
-// ID3D11DeviceContext::ClearDepthStencilView
-
-// definir a que target vamos a pintar:
-// ID3D11DeviceContext::OMSetRenderTargets
-
-// definir el viewport:
-// ID3D11DeviceContext::RSSetViewports
-
-// TODO renderizar aqui
-
-// presentar lo pintado:
-// IDXGISwapChain::Present
-
 
 /***************************************************************************************
 **  Si queremos un triangulo, necesitamos preparar varias cosas:                      **
