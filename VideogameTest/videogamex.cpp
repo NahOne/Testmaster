@@ -8,71 +8,6 @@
 #define WIDTH_APPLICATION 800
 #define HEIGHT_APPLICATION 600
 
-/*
-int CreateContext(HWND hWnd, UINT width_application, UINT height_application){
-	// Tendremos que crear y rellenar una estructura de este tipo
-	DXGI_SWAP_CHAIN_DESC desc;
-	ZeroMemory(&desc, sizeof(desc));
-	// o
-	//DXGI_SWAP_CHAIN_DESC desc = {};
-	desc.BufferCount = 1;
-	desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	desc.Windowed = TRUE;
-	// TODO:
-	desc.BufferDesc.Width=width_application;
-	desc.BufferDesc.Height=height_application;
-	desc.BufferDesc.RefreshRate.Numerator=1;
-	desc.BufferDesc.RefreshRate.Denominator=60;
-	desc.OutputWindow=hWnd;
-	desc.SampleDesc.Count=1;
-	desc.SampleDesc.Quality=0;
-	//desc. ????
-
-	// Que DirectX queremos
-	D3D_FEATURE_LEVEL featureLevels[] =
-	{
-		D3D_FEATURE_LEVEL_11_0,
-		D3D_FEATURE_LEVEL_10_0,
-		D3D_FEATURE_LEVEL_10_1,
-	};
-	UINT numFeatureLevels = ARRAYSIZE(featureLevels);
-
-
-	ID3D11Device *l_D3DDevice=0; // esta clase, el device, nos sirve para crear objetos de DirectX
-	ID3D11DeviceContext *l_DeviceContext=0; // el contexto nos va a servir para usar objetos de DirectX
-	IDXGISwapChain *l_SwapChain=0; // la cadena de swap
-
-
-	/*
-	
-D3D_FEATURE_LEVEL  FeatureLevelsRequested = D3D_FEATURE_LEVEL_11_0;
-UINT               numLevelsRequested = 1;
-D3D_FEATURE_LEVEL  FeatureLevelsSupported;
-
-	if( FAILED (hr = D3D11CreateDeviceAndSwapChain( NULL, 
-                D3D_DRIVER_TYPE_HARDWARE, 
-                NULL, 
-                0,
-                &FeatureLevelsRequested, 
-                numFeatureLevelsRequested, 
-                D3D11_SDK_VERSION, 
-                &sd, 
-                &g_pSwapChain, 
-                &g_pd3dDevice, 
-                &FeatureLevelsSupported,
-                &g_pImmediateContext )))
-	{
-    return hr;
-}*/
-/*
-	HRESULT hr;
-	if (FAILED(hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, featureLevels, numFeatureLevels, D3D11_SDK_VERSION, &desc, &l_SwapChain, &l_D3DDevice, NULL, &l_DeviceContext)))
-	{
-		return S_FALSE;
-	}
-}*/
-
 //-----------------------------------------------------------------------------
 // Name: MsgProc()
 // Desc: The window's message handler
@@ -141,7 +76,8 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
   // TODO Crear el back buffer
   //CreateBackBuffer( hWnd, rc.right - rc.left, rc.bottom - rc.top );
   context->CreateBackBuffer(hWnd, rc.right - rc.left, rc.bottom - rc.top );
-
+  EffectStruct shaders = context->LoadDebugEffect();
+  context->PrepararBuffer(shaders);
 
 
   UpdateWindow( hWnd );
@@ -160,7 +96,9 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
     else
     {
        // Main loop: Añadir aquí el Update y Render de la aplicación principal
-	   context->Render();
+		context->Render();
+		context->PintarBuffer(shaders);
+	
     }
   }
   UnregisterClass( APPLICATION_NAME, wc.hInstance );
