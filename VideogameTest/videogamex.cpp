@@ -1,7 +1,10 @@
 #include <Windows.h>
 #include <d3d11.h>
 #include "ContextManager.h"
+#include "Application.h"
+#include "DebugRender.h"
 
+#pragma comment(lib,"Winmm.lib")
 #pragma comment(lib,"d3d11.lib")
 
 #define APPLICATION_NAME	"VIDEOGAMETEST"
@@ -45,6 +48,9 @@ LRESULT WINAPI MsgProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 //-----------------------------------------------------------------------
 int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, int _nCmdShow)
 {
+  float l_PreviousTime, l_ElapsedTime;
+  DWORD l_CurrentTime = timeGetTime();
+  l_PreviousTime = l_CurrentTime;
 	// Register the window class
   WNDCLASSEX wc = {	sizeof(WNDCLASSEX), CS_CLASSDC, MsgProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, APPLICATION_NAME, NULL };
 
@@ -63,21 +69,26 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 
   // TODO Crear el contexto DIRECTX
   //CreateContext( hWnd, WIDTH_APPLICATION, HEIGHT_APPLICATION);
-  CContextManager* context = new CContextManager();
-  context->Init(hWnd, WIDTH_APPLICATION, HEIGHT_APPLICATION);
-  context->TakeRenderTarget();
+  CContextManager context;
+  context.CreateContext(hWnd, WIDTH_APPLICATION, HEIGHT_APPLICATION);
+  context.CreateBackBuffer(hWnd, WIDTH_APPLICATION, HEIGHT_APPLICATION);
 
-
-  // Añadir aquí el Init de la applicacioón
+    // Añadir aquí el Init de la applicacioón
   ShowWindow( hWnd, SW_SHOWDEFAULT );
+
+  context.InitStates();
+  CDebugRender debugRender(context.GetDevice());
+  CApplication application(&debugRender, &context);
+
+
 
 
 
   // TODO Crear el back buffer
   //CreateBackBuffer( hWnd, rc.right - rc.left, rc.bottom - rc.top );
-  context->CreateBackBuffer(hWnd, rc.right - rc.left, rc.bottom - rc.top );
-  EffectStruct shaders = context->LoadDebugEffect();
-  context->PrepararBuffer(shaders);
+  //context->CreateBackBuffer(hWnd, rc.right - rc.left, rc.bottom - rc.top );
+ // EffectStruct shaders = context->LoadDebugEffect();
+//  context->PrepararBuffer(shaders);
 
 
   UpdateWindow( hWnd );
@@ -95,16 +106,25 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
     }
     else
     {
-       // Main loop: Añadir aquí el Update y Render de la aplicación principal
-		context->Render();
-		context->PintarBuffer(shaders);
+	   // Main loop: Añadir aquí el Update y Render de la aplicación principal
+	   // TODO
+	   l_CurrentTime = timeGetTime();
+	   l_ElapsedTime = (float)(l_CurrentTime - l_PreviousTime);
+	   l_PreviousTime = (float) l_CurrentTime;
+	   printf("l_CurrentTime: %d", l_CurrentTime);
+	   printf("l_PreviousTime: %d", l_PreviousTime);
+	   printf("l_ElapsedTime: %d", l_ElapsedTime);
+	   application.Update(l_ElapsedTime);
+	   application.Render();
+
+ 	   
 	
     }
   }
   UnregisterClass( APPLICATION_NAME, wc.hInstance );
 
   // Añadir una llamada a la alicación para finalizar/liberar memoria de todos sus datos
-  delete context;
+//  delete context;
 
   return 0;
 }

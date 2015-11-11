@@ -11,10 +11,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="ContextManager.cpp" />
+    <ClCompile Include="DebugRender.cpp" />
+    <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="SphericalCameraController.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraController.h" />
     <ClInclude Include="ContextManager.h" />
+    <ClInclude Include="DebugRender.h" />
+    <ClInclude Include="Effect.h" />
+    <ClInclude Include="Frustum.h" />
+    <ClInclude Include="RenderableVertexs.h" />
+    <ClInclude Include="SphericalCameraController.h" />
+    <ClInclude Include="VertexTypes.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{31F7443F-B43C-4D38-931C-FAC7C771EF91}</ProjectGuid>
@@ -26,7 +38,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
