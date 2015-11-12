@@ -23,6 +23,9 @@ public:
 	CContextManager();
 	~CContextManager();
 
+	int m_width;
+	int m_height;
+
 	LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	HRESULT CreateContext(HWND hWnd, int Width, int Height);
@@ -34,14 +37,16 @@ public:
 	void EndRender();
 	void Draw(CRenderableVertexs* _VerticesToRender, ERasterizedState _RS);
 
-	ID3D11Device* GetDevice() const { return m_D3DDevice; }
-	ID3D11DeviceContext* GetDeviceContext() const { return m_DeviceContext; }
+	ID3D11Device* GetDevice() const { return m_D3DDevice; };
+	ID3D11DeviceContext* GetDeviceContext() const { return m_DeviceContext; };
+	void Resize(HWND hWnd, unsigned int Width, unsigned int Height);
+	float GetAspectRatio() const {return (float)m_width/(float)m_height;};
 
-	void SetBaseColor(const CColor& _Color) { m_Parameters.m_BaseColor = _Color; }
-	void SetWorldMatrix(const Mat44f& _Model) { m_Parameters.m_World = _Model; }
-	void SetCamera(const Mat44f& _View, const Mat44f& _Projection) { m_Parameters.m_View = _View; m_Parameters.m_Projection = _Projection; }
-	void SetCamera(const CCamera& _Camera) { m_Parameters.m_View = _Camera.GetView(); m_Parameters.m_Projection = _Camera.GetProjection(); }
-	void SetDebugSize(float _Size) { m_Parameters.m_DebugRenderScale = _Size; }
+	void SetBaseColor(const CColor& _Color) { m_Parameters.m_BaseColor = _Color; };
+	void SetWorldMatrix(const Mat44f& _Model) { m_Parameters.m_World = _Model; };
+	void SetCamera(const Mat44f& _View, const Mat44f& _Projection) { m_Parameters.m_View = _View; m_Parameters.m_Projection = _Projection; };
+	void SetCamera(const CCamera& _Camera) { m_Parameters.m_View = _Camera.GetView(); m_Parameters.m_Projection = _Camera.GetProjection(); };
+	void SetDebugSize(float _Size) { m_Parameters.m_DebugRenderScale = _Size; };
 
 private:
 

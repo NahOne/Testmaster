@@ -3,6 +3,7 @@
 
 #include "CameraController.h"
 
+
 class CSphericalCameraController : public CCameraController
 {
 private:
