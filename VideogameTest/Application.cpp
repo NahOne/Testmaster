@@ -5,83 +5,128 @@
 
 #include "ContextManager.h"
 #include "DebugRender.h"
-
 #include "InputManager.h"
+#include "DebugHelper.h"
+
+static void __stdcall SwitchCameraCallback(void* _app)
+{
+	((CApplication*)_app)->SwitchCamera();
+}
 
 CApplication::CApplication(CDebugRender *_DebugRender, CContextManager *_ContextManager)
 	: m_DebugRender(_DebugRender)
 	, m_ContextManager(_ContextManager)
-	, m_WorldRotation(0)
+	, m_BackgroundColor(.2f, .1f, .4f)
+	, m_CurrentCamera(0)
 {
+	CDebugHelper::GetDebugHelper()->Log("CApplication::CApplication");
+
+	CDebugHelper::SDebugBar bar;
+	bar.name = "CApplication";
+
+	{
+		CDebugHelper::SDebugVariable var = {};
+		var.name = "background";
+		var.type = CDebugHelper::COLOR;
+		var.mode = CDebugHelper::READ_WRITE;
+		var.pColor = &m_BackgroundColor;
+
+		bar.variables.push_back(var);
+	}
+	{
+		CDebugHelper::SDebugVariable var = {};
+		var.name = "cube";
+		var.type = CDebugHelper::POSITION_ORIENTATION;
+		var.mode = CDebugHelper::READ_WRITE;
+		var.pPositionOrientation = &m_CubeTransform;
+
+		bar.variables.push_back(var);
+	}
+	{
+		CDebugHelper::SDebugVariable var = {};
+		var.name = "switch camera";
+		var.type = CDebugHelper::BUTTON;
+		var.callback = SwitchCameraCallback;
+		var.data = this;
+
+		bar.variables.push_back(var);
+	}
+
+	CDebugHelper::GetDebugHelper()->RegisterBar(bar);
+
 }
 
 
 CApplication::~CApplication()
 {
+	CDebugHelper::GetDebugHelper()->Log("CApplication::~CApplication");
 }
 
 
-void CApplication::Update(float _ElapsedTime)
+void CApplication::SwitchCamera()
 {
-	m_WorldRotation += 0.00013f*_ElapsedTime;
-	
-	while (m_WorldRotation > FLOAT_PI_VALUE * 2)
+	++m_CurrentCamera;
+	if (m_CurrentCamera > 1)
 	{
-		m_WorldRotation -= FLOAT_PI_VALUE * 2;
+		m_CurrentCamera = 0;
 	}
-	Vect3f cameraMovement(0,0,0);
+}
 
-	if (CInputManager::GetInputManager()->IsActionActive("MOVE_LEFT"))
-	{
-		cameraMovement.x += 0.0001f * _ElapsedTime;
-	}
-	if (CInputManager::GetInputManager()->IsActionActive("MOVE_RIGHT"))
-	{
-		cameraMovement.x -= 0.0001f * _ElapsedTime;
-	}
-	if (CInputManager::GetInputManager()->IsActionActive("MOVE_UP"))
-	{
-		cameraMovement.y += 0.0001f * _ElapsedTime;
-	}
-	if (CInputManager::GetInputManager()->IsActionActive("MOVE_DOWN"))
-	{
-		cameraMovement.y -= 0.0001f * _ElapsedTime;
-	}
+void CApplication::Update(float _ElapsedTime)
+{	
 
-	m_Camera.Update(_ElapsedTime,cameraMovement);
+	switch (m_CurrentCamera)
+	{
+	case 0:
+		if (CInputManager::GetInputManager()->IsActionActive("MOVE_CAMERA"))
+		{
+			Vect3f cameraMovement(0, 0, 0);
 
+			cameraMovement.x += CInputManager::GetInputManager()->GetAxis("X_AXIS") * _ElapsedTime * 0.5f;
+			cameraMovement.y += CInputManager::GetInputManager()->GetAxis("Y_AXIS") * _ElapsedTime * 0.5f;
+
+			m_SphericalCamera.Update(cameraMovement);
+		}
+		break;
+	case 1:
+	{
+		m_FPSCamera.AddYaw(-CInputManager::GetInputManager()->GetAxis("X_AXIS") * _ElapsedTime * 0.05f);
+		m_FPSCamera.AddPitch(CInputManager::GetInputManager()->GetAxis("Y_AXIS") * _ElapsedTime * -0.05f);
+
+		m_FPSCamera.Move(CInputManager::GetInputManager()->GetAxis("STRAFE"), CInputManager::GetInputManager()->GetAxis("MOVE_FWD"), false, _ElapsedTime);
+	}
+		break;
+	}
 }
 
 void CApplication::Render()
 {
-	m_ContextManager->BeginRender();
+	m_ContextManager->BeginRender(m_BackgroundColor);
 
 	CCamera camera;
 	camera.SetFOV(1.047f);
 	camera.SetAspectRatio(m_ContextManager->GetAspectRatio());
 	camera.SetZNear(0.1f);
-	camera.SetZFar(70.f);
+	camera.SetZFar(100.f);
 
-	camera.SetPosition(Vect3f(5, 10, 20));
-	camera.SetLookAt(Vect3f(0, 0, 0));
-	camera.SetUp(Vect3f(0, 1, 0));
+	switch (m_CurrentCamera)
+	{
+	case 0:
+		m_SphericalCamera.SetCamera(&camera);
+		break;
+	case 1:
+		m_FPSCamera.SetCamera(&camera);
+		break;
+	default:
+		m_CurrentCamera = 0;
+		break;
+	}
 
 	camera.SetMatrixs();
-	m_Camera.SetCamera(&camera);
 
 	Mat44f world;
 
-	world.SetIdentity();
-	world.RotByAnglesYXZ(m_WorldRotation, 0, 0);
-
-	/*
-	Mat44f world, view, projection;
-	view.SetIdentity();
-	view.SetFromLookAt(Vect3f(5, 10, 20), Vect3f(0, 0, 0), Vect3f(0, 1, 0));
-
-	projection.SetIdentity();
-	projection.SetFromPerspective(1.047f, 8.0f / 6.0f, 0.1f, 50.0f);
-	*/
+	world.SetFromPosAndAnglesYXZ(m_CubeTransform.Position, m_CubeTransform.Yaw, m_CubeTransform.Pitch, m_CubeTransform.Roll);
 
 	m_ContextManager->SetWorldMatrix(world);
 	m_ContextManager->SetCamera(camera);
@@ -89,8 +134,24 @@ void CApplication::Render()
 	m_ContextManager->SetDebugSize(5);
 	m_ContextManager->SetBaseColor(CColor(1, 1, 1, 1));
 
-	m_ContextManager->Draw(m_DebugRender->GetSimpleCube(), CContextManager::RS_WIREFRAME);
+	m_ContextManager->Draw(m_DebugRender->GetSimpleCube());
 
+	world.SetIdentity();
+	m_ContextManager->SetWorldMatrix(world);
+	m_ContextManager->Draw(m_DebugRender->GetAxis());
+
+	world.SetIdentity();
+	world.SetFromPos(10, 0, 0);
+	m_ContextManager->SetWorldMatrix(world);
+	m_ContextManager->Draw(m_DebugRender->GetClassicBlendTriangle(), CContextManager::RS_SOLID, CContextManager::DSS_OFF, CContextManager::BLEND_CLASSIC);
+
+	world.SetIdentity();
+	world.SetFromPos(0, 0, -10);
+	m_ContextManager->SetWorldMatrix(world);
+	m_ContextManager->Draw(m_DebugRender->GetPremultBlendTriangle(), CContextManager::RS_SOLID, CContextManager::DSS_OFF, CContextManager::BLEND_PREMULT);
+
+
+	CDebugHelper::GetDebugHelper()->Render();
 
 	m_ContextManager->EndRender();
 }

@@ -52,7 +52,7 @@
     <OutDir>$(SolutionDir)\bin\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)\bin\Intermediate\$(ProjectName)$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_d</TargetName>
-    <LibraryPath>$(SolutionDir)bin\lib\;$(SolutionDir)3rdParty\libxml2-2.7.2.win32\lib\;$(SolutionDir)3rdParty\iconv-1.9.2.win32\lib\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)bin\lib\;$(SolutionDir)3rdParty\libxml2-2.7.2.win32\lib\;$(SolutionDir)3rdParty\iconv-1.9.2.win32\lib\;$(DXSDK_DIR)\lib\x86;$(SolutionDir)\3rdParty\AntTweakBar\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -67,13 +67,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Graphics;$(SolutionDir)\Base;$(SolutionDir)\Core;$(SolutionDir)\3rdParty\libxml2-2.7.2.win32\lib;$(SolutionDir)\3rdParty\iconv-1.9.2.win32\lib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Graphics;$(SolutionDir)\Base;$(SolutionDir)\Core;$(SolutionDir)\3rdParty\libxml2-2.7.2.win32\lib;$(SolutionDir)\3rdParty\iconv-1.9.2.win32\lib;$(SolutionDir)\3rdParty\AntTweakBar\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName)_d.pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>Graphics_d.lib;Core_d.lib;libxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Graphics_d.lib;Core_d.lib;libxml2.lib;AntTweakBarDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

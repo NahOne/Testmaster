@@ -1,3 +1,4 @@
+#include "Math\Matrix44.h"
 
 struct CEffectParameters
 {
