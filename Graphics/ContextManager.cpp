@@ -330,7 +330,7 @@ void CContextManager::InitRasterizerStates()
 		D3D11_RASTERIZER_DESC l_WireframeDesc;
 		ZeroMemory(&l_WireframeDesc, sizeof(D3D11_RASTERIZER_DESC));
 		l_WireframeDesc.FillMode = D3D11_FILL_SOLID;
-		l_WireframeDesc.CullMode = D3D11_CULL_FRONT;
+		l_WireframeDesc.CullMode = D3D11_CULL_BACK;
 		l_WireframeDesc.FrontCounterClockwise = true;
 
 		HRESULT l_HR = m_D3DDevice->CreateRasterizerState(&l_WireframeDesc, &m_RasterizerSates[RS_FRONTAL]);
@@ -341,7 +341,7 @@ void CContextManager::InitRasterizerStates()
 		D3D11_RASTERIZER_DESC l_WireframeDesc;
 		ZeroMemory(&l_WireframeDesc, sizeof(D3D11_RASTERIZER_DESC));
 		l_WireframeDesc.FillMode = D3D11_FILL_SOLID;
-		l_WireframeDesc.CullMode = D3D11_CULL_BACK;
+		l_WireframeDesc.CullMode = D3D11_CULL_FRONT;
 		l_WireframeDesc.FrontCounterClockwise = true;
 
 		HRESULT l_HR = m_D3DDevice->CreateRasterizerState(&l_WireframeDesc, &m_RasterizerSates[RS_BACK]);
@@ -358,6 +358,16 @@ void CContextManager::InitDepthStencilStates()
 		l_desc.DepthFunc = D3D11_COMPARISON_LESS;
 
 		HRESULT l_HR = m_D3DDevice->CreateDepthStencilState(&l_desc, &m_DepthStencilStates[DSS_DEPTH_ON]);
+		assert(l_HR == S_OK);
+	}
+
+	{
+		D3D11_DEPTH_STENCIL_DESC l_desc = {};
+		l_desc.DepthEnable = true;
+		l_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+		l_desc.DepthFunc = D3D11_COMPARISON_LESS;
+
+		HRESULT l_HR = m_D3DDevice->CreateDepthStencilState(&l_desc, &m_DepthStencilStates[DSS_DEPTH_ON2]);
 		assert(l_HR == S_OK);
 	}
 
@@ -437,7 +447,7 @@ void CContextManager::Resize(HWND hWnd, unsigned int Width, unsigned int Height)
 	}
 }
 
-void CContextManager::Draw(CRenderableVertexs* _VerticesToRender, ERasterizedState _RS, EDepthStencilStates _DSS, EBlendStates _BS)
+void CContextManager::Draw(const CRenderableVertexs* _VerticesToRender, ERasterizedState _RS, EDepthStencilStates _DSS, EBlendStates _BS)
 {
 	m_DeviceContext->RSSetState(m_RasterizerSates[_RS]);
 	m_DeviceContext->OMSetDepthStencilState(m_DepthStencilStates[_DSS], 0);

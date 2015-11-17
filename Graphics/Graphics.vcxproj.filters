@@ -4,20 +4,27 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="ContextManager.h" />
-    <ClInclude Include="DebugRender.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="FPSCameraController.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="RenderableVertexs.h" />
     <ClInclude Include="SphericalCameraController.h" />
     <ClInclude Include="VertexTypes.h" />
+    <ClInclude Include="DebugRender.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="MaterialManager.h" />
+    <ClInclude Include="RenderableObject.h" />
+    <ClInclude Include="RenderManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="ContextManager.cpp" />
-    <ClCompile Include="DebugRender.cpp" />
     <ClCompile Include="FPSCameraController.cpp" />
-    <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="SphericalCameraController.cpp" />
+    <ClCompile Include="DebugRender.cpp" />
+    <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="MaterialManager.cpp" />
+    <ClCompile Include="RenderableObject.cpp" />
+    <ClCompile Include="RenderManager.cpp" />
   </ItemGroup>
 </Project>

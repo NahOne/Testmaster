@@ -191,7 +191,7 @@ void CInputManagerImplementation::LoadCommandsFromFile(const std::string& path)
 		m_Axis.push_back(axis);
 	}
 
-	/*/
+	
 	CXMLTreeNode l_XML;
 	if (l_XML.LoadFile(path.c_str()))
 	{
@@ -246,6 +246,7 @@ void CInputManagerImplementation::LoadCommandsFromFile(const std::string& path)
 						//  XINPUT_GAMEPAD_X             
 						//  XINPUT_GAMEPAD_Y             
 						// 
+						
 					}
 
 					m_Actions.push_back(action);
@@ -253,12 +254,13 @@ void CInputManagerImplementation::LoadCommandsFromFile(const std::string& path)
 				else if (l_Element.GetName() == std::string("axis"))
 				{
 					// TODO: parse axis
+
 				}
 
 			}
 		}
 	}
-	//*/
+	
 
 	EndFrame();
 }
@@ -438,9 +440,17 @@ void CInputManagerImplementation::BeginFrame()
 
 			case Action::ON_RELEASE:
 				// TODO: añadir acciones de release
+				if (otherNeeds && !current && previous)
+				{
+					isActionActive = true;
+				}
 				break;
 			case Action::WHILE_RELEASED:
 				// TODO: añadir acciones de botón no pulsado
+				if (otherNeeds && !current && !previous)
+				{
+					isActionActive = true;
+				}
 				break;
 
 			default:
